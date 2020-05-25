@@ -1,12 +1,21 @@
 import os
 import sys
 
+"""
+TO-DO:
+> settle on methods for unlocking doors and player actions and eliminate duplication.
+> Add a slowprint function for effect.
+"""
+
+
+
 def get_title_option():
     option = input("> ").lower()
     if option == "play":
         start_game()
     elif option == "help":
         print_help()
+        get_title_option()
     elif option == "quit":
         sys.exit()
     else:
@@ -57,7 +66,6 @@ class door(item):
 class location():
     def __init__(self, name: str, accessible: bool):
         self.name = name
-        #self.needs_key = not accessible  # negation operator
         self.key_item = ""
         self.has_access = accessible
         self.view = ""
@@ -81,11 +89,19 @@ class player():
         self.hp = 100
         self.sanity = 100
         self.hunger = 0  # kind of like WOH's DOOM stat
-        self.inventory = []
+        self.ailments = {}
+        self.inventory = {}
         self.objectives = {"Check out the HOUSE and the GARAGE"}
         self.location = start_location
+        self.game_over = False
 
 # player interactivivty funcs
+
+def quit_game():
+    tf = input("Are you sure you want to quit? (Y/N): ")
+    if (tf.lower() == "y") or (tf.lower() == "yes"):
+        # add save mechanism
+        sys.exit(2)
 
 def go_to(current_player: player, destination: str):
     current_location = current_player.location
@@ -93,7 +109,15 @@ def go_to(current_player: player, destination: str):
         if loc.name.lower() == destination.lower():
             current_player.location = loc
             print(current_player.location.description)
+            return
+    print("Can't go to " + destination + "!")
 
+def look_around(current_player: player):
+    current_location = current_player.location
+    print(current_location.view)
+
+def prompt():
+    inpt_string = input("> ")
 
 #instantiate items and give detail
 house_key = item("HOUSE key", 1)
@@ -133,7 +157,14 @@ driveway.view = "The GARAGE is in front of you and the adjoining HOUSE, off to t
 
 
 def start_game():
-    pass
+
+
+    mainguy = player(truck)
+    while mainguy.game_over == False:
+        prompt()
 
 
 
+
+if __name__ == "__main__":
+    title_screen()
