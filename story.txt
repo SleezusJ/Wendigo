@@ -1,0 +1,48 @@
+//WENDIGO
+//STORY.TXT to be accessed via line number
+//May the 20th, 2020 --K.* 
+
+
+//HELP
+WENDIGO is a text based game and uses the command prompt to get player input.
+Type your desired action into the prompt!
+Typical actions look like:
+>look around
+>go to <area>
+>inspect <object>
+>use <object>
+>take <object>
+
+
+//ERRORS
+--CAN'T ACTION
+Can't inspect
+Can't use
+Can't take
+
+
+
+//PROLOGUE
+The truck rattles along as you drive endless miles. Gaps let the cold in and it is begining to snow...
+The road still looks okay but you've only seen a handful of other drivers in the past few hours.
+How long has it been since you've been here?
+Something like ten years.
+
+
+//TRUCK 
+//Responses 
+//--look around
+The cab of the truck suddenly feels too small. The drive didn't do your back any favors either.
+Snow is already starting to blanket the windshield.
+Time to exit the TRUCK.
+
+//--exit TRUCK
+You get out of the truck, feet crunching into a rapidly growing layer of snow.
+If you don't hurry
+
+
+//DRIVEWAY
+Your surroundings give you a pang of familiarity. Something from another life.
+You turn off the main street and after a while make the sharp turn into the DRIVEWAY. 
+You put the truck in park and stretch in the seat.
+The GARAGE is in front of you and the adjoining HOUSE, off to the left. 
