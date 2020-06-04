@@ -38,7 +38,7 @@ Time to exit the TRUCK.
 
 //--exit TRUCK
 You get out of the truck, feet crunching into a rapidly growing layer of snow.
-If you don't hurry
+If you don't hurry you'll have to spend the night here.
 
 
 //DRIVEWAY

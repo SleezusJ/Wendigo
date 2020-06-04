@@ -1,5 +1,7 @@
 import os
 import sys
+import story
+from util import slow_print
 
 """
 TO-DO:
@@ -55,13 +57,10 @@ class item():
         self.ok_to_drop = False
 
 class weapon(item):
-    def __init__(self):
-        self.damage = 0
+    def __init__(self, name, damage):
+        self.name = name
+        self.damage = damage
         self.ranged = False
-
-class door(item):
-    def __init__(self):
-        self.locked = True
 
 class location():
     def __init__(self, name: str, accessible: bool):
@@ -73,7 +72,6 @@ class location():
         self.available_actions = {}
         self.adjacent_locations = {}
         self.items_in_location = {}
-
 
     def __access(self, attempted_key: item):
         if self.has_access:
@@ -104,9 +102,13 @@ def quit_game():
         sys.exit(2)
 
 def go_to(current_player: player, destination: str):
-    current_location = current_player.location
-    for loc in current_location.adjacent_locations:
-        if loc.name.lower() == destination.lower():
+    #current_location = current_player.location
+    #for loc in current_location.adjacent_locations:
+    if current_player.location == destination:
+        print("You are already there!")
+
+    for loc in current_player.location.adjacent_locations:
+        if loc.name.lower() == destination:
             current_player.location = loc
             print(current_player.location.description)
             return
@@ -114,14 +116,27 @@ def go_to(current_player: player, destination: str):
 
 def look_around(current_player: player):
     current_location = current_player.location
-    print(current_location.view)
+    print(current_location.view + "\n")
 
-def prompt():
-    inpt_string = input("> ")
+def unlock(current_player: player, door_to_unlock: str):
+    #if door_to_unlock in current_player.location.adjacent_locations:
+    pass
 
-#instantiate items and give detail
+def prompt(player: player):
+    inpt_string = input("> ").lower()
+    cmd = inpt_string.split(" ")
+    if cmd[0] == "look" and cmd[1] == "around":
+        look_around(player)
+    elif cmd[0] == "go" and cmd[1] == "to":
+        go_to(player, cmd[2])
+    else:
+        print("I don't know what you want me to do.")
+
+
+# instantiate items and give detail
 house_key = item("HOUSE key", 1)
 garage_key = item("GARAGE key", 1)
+
 pvc_bow = weapon("PVC bow", 100)
 pvc_bow.ranged = True
 
@@ -135,15 +150,17 @@ truck = location("TRUCK", True)
 typical_location_actions = {"look around", "inspect"}
 
 #TRUCK
-truck.available_actions = typical_location_actions + {"exit"}
+truck.available_actions = typical_location_actions.add("exit")
 truck.adjacent_locations = {driveway}
-truck.view = "The cab of the truck suddenly feels too small. The drive didn't do your back any favors either.\nSnow is already starting to blanket the windshield.\nTime to exit the TRUCK."
-truck.description = "Rot holes and an ever-present engine light.\nThis thing has been 'on the way out' for years."
+truck.view = "The cab of the truck suddenly feels too small. The drive didn't do your back any favors either.\nSnow is already starting to blanket the windshield. Time to exit the TRUCK."
+truck.description = "Rot holes and an ever-present engine light. This truck has been 'on the way out' for years now."
 
 #DRIVEWAY
 driveway.available_actions = typical_location_actions
 driveway.adjacent_locations = {house, garage}
-driveway.view = "The GARAGE is in front of you and the adjoining HOUSE, off to the left."
+driveway.view = story.driveway_view
+driveway.description = story.driveway_desc
+driveway.items_in_location
 
 #HOUSE
 
@@ -157,11 +174,18 @@ driveway.view = "The GARAGE is in front of you and the adjoining HOUSE, off to t
 
 
 def start_game():
-
-
+    os.system('clear')
     mainguy = player(truck)
+    mainguy.inventory = {house_key, garage_key}
+
+    print(story.prologue)
     while mainguy.game_over == False:
-        prompt()
+        #os.system('clear')
+        line_len = len(mainguy.location.description)
+        print("-" * line_len)
+        print(mainguy.location.description + "\n")
+        print("-" * line_len)
+        prompt(mainguy)
 
 
 
