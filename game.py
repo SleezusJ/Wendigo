@@ -67,6 +67,7 @@ class location():
         self.name = name
         self.key_item = ""
         self.has_access = accessible
+        self.exit_to_location = None
         self.view = ""
         self.description = ""
         self.available_actions = {}
@@ -91,6 +92,7 @@ class player():
         self.inventory = {}
         self.objectives = {"Check out the HOUSE and the GARAGE"}
         self.location = start_location
+        self.prev_location = None
         self.game_over = False
 
 # player interactivivty funcs
@@ -114,6 +116,16 @@ def go_to(current_player: player, destination: str):
             return
     print("Can't go to " + destination + "!")
 
+def exit_location(current_player: player, current_location: str):
+    if current_location == current_player.location.name.lower():
+        if current_player.location.exit_to_location is not None:
+            current_player.location = current_player.location.exit_to_location
+        else:
+            print("No clear exit!")
+    else:
+        print("Not in " + current_location)
+
+
 def look_around(current_player: player):
     current_location = current_player.location
     print(current_location.view + "\n")
@@ -122,6 +134,11 @@ def unlock(current_player: player, door_to_unlock: str):
     #if door_to_unlock in current_player.location.adjacent_locations:
     pass
 
+def list_inventory(current_player: player):
+    print("ITEMS IN INVENTORY:")
+    for item in current_player.inventory:
+        print(item.name)
+
 def prompt(player: player):
     inpt_string = input("> ").lower()
     cmd = inpt_string.split(" ")
@@ -129,6 +146,13 @@ def prompt(player: player):
         look_around(player)
     elif cmd[0] == "go" and cmd[1] == "to":
         go_to(player, cmd[2])
+    elif (cmd[0] == "check" and cmd[1] == "inventory") or (cmd[0] == "backpack"):
+        list_inventory(player)
+    elif cmd[0] == "exit":
+        try:
+            exit_location(player, cmd[1])
+        except IndexError:
+            print("Where do you want to exit from?")
     else:
         print("I don't know what you want me to do.")
 
@@ -151,6 +175,7 @@ typical_location_actions = {"look around", "inspect"}
 
 #TRUCK
 truck.available_actions = typical_location_actions.add("exit")
+truck.exit_to_location = driveway
 truck.adjacent_locations = {driveway}
 truck.view = "The cab of the truck suddenly feels too small. The drive didn't do your back any favors either.\nSnow is already starting to blanket the windshield. Time to exit the TRUCK."
 truck.description = "Rot holes and an ever-present engine light. This truck has been 'on the way out' for years now."
@@ -160,7 +185,7 @@ driveway.available_actions = typical_location_actions
 driveway.adjacent_locations = {house, garage}
 driveway.view = story.driveway_view
 driveway.description = story.driveway_desc
-driveway.items_in_location
+
 
 #HOUSE
 
@@ -183,6 +208,7 @@ def start_game():
         #os.system('clear')
         line_len = len(mainguy.location.description)
         print("-" * line_len)
+        print(mainguy.location.name)
         print(mainguy.location.description + "\n")
         print("-" * line_len)
         prompt(mainguy)
