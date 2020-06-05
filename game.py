@@ -65,23 +65,15 @@ class weapon(item):
 class location():
     def __init__(self, name: str, accessible: bool):
         self.name = name
-        self.key_item = ""
+        self.key_item = " "
         self.has_access = accessible
         self.exit_to_location = None
         self.view = ""
         self.description = ""
-        self.available_actions = {}
         self.adjacent_locations = {}
         self.items_in_location = {}
-
-    def __access(self, attempted_key: item):
-        if self.has_access:
-            print("you already have access to " + self.name + "!")
-        elif self.has_access is False and attempted_key.name == self.key_item:
-            self.has_access = True
-            print("You can now access " + self.name + "!")
-        elif self.has_access is False and attempted_key.name != self.key_item:
-            print("You need the " + self.key_item + " to get in here!")
+        self.loc_lock_msg = "locked... need a key."
+        self.limitor = "locked door"
 
 class player():
     def __init__(self, start_location: location):
@@ -104,16 +96,16 @@ def quit_game():
         sys.exit(2)
 
 def go_to(current_player: player, destination: str):
-    #current_location = current_player.location
-    #for loc in current_location.adjacent_locations:
     if current_player.location == destination:
         print("You are already there!")
 
     for loc in current_player.location.adjacent_locations:
-        if loc.name.lower() == destination:
+        if (loc.name.lower() == destination) and loc.has_access:
             current_player.location = loc
             print(current_player.location.description)
             return
+        elif (loc.name.lower() == destination) and (loc.has_access == False):
+            print(loc.loc_lock_msg)
     print("Can't go to " + destination + "!")
 
 def exit_location(current_player: player, current_location: str):
@@ -130,9 +122,12 @@ def look_around(current_player: player):
     current_location = current_player.location
     print(current_location.view + "\n")
 
-def unlock(current_player: player, door_to_unlock: str):
-    #if door_to_unlock in current_player.location.adjacent_locations:
-    pass
+def unlock(current_player: player, loc_to_unlock: str):
+    for loc in current_player.location.adjacent_locations:
+        if (loc.name.lower() == loc_to_unlock) and (loc.has_access == False):
+            loc.has_access = True
+            print(loc.name + " is now accessible!")
+            #print(loc.limiter + "is open!")
 
 def list_inventory(current_player: player):
     print("ITEMS IN INVENTORY:")
@@ -153,6 +148,8 @@ def prompt(player: player):
             exit_location(player, cmd[1])
         except IndexError:
             print("Where do you want to exit from?")
+    elif cmd[0] == "unlock":
+        unlock(player, cmd[1])
     else:
         print("I don't know what you want me to do.")
 
